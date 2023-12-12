@@ -1,11 +1,12 @@
+
 import random
 import sys
 import pygame
 from pygame.locals import *
 
-FPS = 32
+FPS = 35
 FPSCLOCK = pygame.time.Clock()
-SCREENWIDTH = 289
+SCREENWIDTH = 400
 SCREENHEIGHT = 511
 SCREEN = pygame.display.set_mode((SCREENWIDTH, SCREENHEIGHT))
 GROUNDY = SCREENHEIGHT * 0.82
@@ -21,7 +22,7 @@ def welcomeScreen():
     playerx = int(SCREENWIDTH/5)
     playery = int((SCREENHEIGHT - GAME_IMAGES['player'].get_height())/2)
     messagex = int((SCREENWIDTH - GAME_IMAGES['message'].get_width())/2)
-    messagey = int(SCREENHEIGHT*0.90)
+    messagey = int(SCREENHEIGHT*0.05)
     basex = 0
     while True:
         for event in pygame.event.get():
@@ -41,6 +42,7 @@ def welcomeScreen():
                 FPSCLOCK.tick(FPS)
 
 
+
 def mainGame():
     score = 0
     playerx = int(SCREENWIDTH/5)
@@ -51,13 +53,13 @@ def mainGame():
     newPipe2 = getRandomPipe()
 
     upperPipes = [
-        {'x': SCREENWIDTH+200, 'y': newPipe1[0]['y']},
-        {'x': SCREENWIDTH+200+(SCREENWIDTH/2), 'y': newPipe2[0]['y']},
+        {'x': SCREENWIDTH+150, 'y': newPipe1[0]['y']},
+        {'x': SCREENWIDTH+150+(SCREENWIDTH/2), 'y': newPipe2[0]['y']},
     ]
 
     lowerPipes = [
-        {'x': SCREENWIDTH+200, 'y': newPipe1[1]['y']},
-        {'x': SCREENWIDTH+200+(SCREENWIDTH/2), 'y': newPipe2[1]['y']},
+        {'x': SCREENWIDTH+150, 'y': newPipe1[1]['y']},
+        {'x': SCREENWIDTH+150+(SCREENWIDTH/2), 'y': newPipe2[1]['y']},
     ]
 
     pipeVelX = -4
@@ -88,7 +90,7 @@ def mainGame():
         playerMidPos = playerx + GAME_IMAGES['player'].get_width()/2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + GAME_IMAGES['pipe'][0].get_width()/2
-            if pipeMidPos <= playerMidPos < pipeMidPos + 4:
+            if pipeMidPos <= playerMidPos < pipeMidPos + 2:
                 score += 1
                 print(f"Your score is {score}")
                 GAME_SOUNDS['point'].play()
@@ -138,18 +140,15 @@ def mainGame():
 
 
 def isCollide(playerx, playery, upperPipes, lowerPipes):
-    if playery > GROUNDY - 25 or playery < 0:
+    if playery > GROUNDY - GAME_IMAGES['player'].get_height() or playery < 0:
         GAME_SOUNDS['hit'].play()
         return True
 
-    for pipe in upperPipes:
-        pipeHeight = GAME_IMAGES['pipe'][0].get_height()
-        if (playery < pipeHeight + pipe['y'] and abs(playerx - pipe['x']) < GAME_IMAGES['pipe'][0].get_width()):
-            GAME_SOUNDS['hit'].play()
-            return True
+    player_rect = pygame.Rect(playerx, playery, GAME_IMAGES['player'].get_width(), GAME_IMAGES['player'].get_height())
 
-    for pipe in lowerPipes:
-        if (playery + GAME_IMAGES['player'].get_height() > pipe['y']) and abs(playerx - pipe['x']) < GAME_IMAGES['pipe'][0].get_width():
+    for pipe in upperPipes + lowerPipes:
+        pipe_rect = pygame.Rect(pipe['x'], pipe['y'], GAME_IMAGES['pipe'][0].get_width(), GAME_IMAGES['pipe'][0].get_height())
+        if player_rect.colliderect(pipe_rect):
             GAME_SOUNDS['hit'].play()
             return True
 
@@ -159,7 +158,7 @@ def isCollide(playerx, playery, upperPipes, lowerPipes):
 def getRandomPipe():
 
     pipeHeight = GAME_IMAGES['pipe'][0].get_height()
-    offset = SCREENHEIGHT/3
+    offset = SCREENHEIGHT/2.5
     y2 = offset + random.randrange(0, int(SCREENHEIGHT -
                                    GAME_IMAGES['base'].get_height() - 1.2 * offset))
     pipeX = SCREENWIDTH + 10
@@ -169,6 +168,7 @@ def getRandomPipe():
         {'x': pipeX, 'y': y2}
     ]
     return pipe
+
 
 
 if __name__ == "__main__":
@@ -197,6 +197,7 @@ if __name__ == "__main__":
                            pygame.image.load(PIPE).convert_alpha()
                            )
 
+
     GAME_SOUNDS['die'] = pygame.mixer.Sound('all/audio//die.wav')
     GAME_SOUNDS['hit'] = pygame.mixer.Sound('all/audio//hit.wav')
     GAME_SOUNDS['point'] = pygame.mixer.Sound('all/audio//point.mp3')
@@ -209,3 +210,14 @@ if __name__ == "__main__":
     while True:
         welcomeScreen()
         mainGame()
+
+
+
+
+
+
+
+
+
+
+
