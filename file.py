@@ -3,7 +3,7 @@ import sys
 import pygame
 from pygame.locals import *
 
-FPS = 35
+FPS = 37
 FPSCLOCK = pygame.time.Clock()
 SCREENWIDTH = 400
 SCREENHEIGHT = 511
@@ -101,7 +101,7 @@ def mainGame():
             playery = GROUNDY - playerHeight
             GAME_SOUNDS['hit'].play()
             displayTryAgain()
-            return  # End the game if the player hits the ground
+            return
 
         for upperPipe, lowerPipe in zip(upperPipes, lowerPipes):
             upperPipe['x'] += pipeVelX
